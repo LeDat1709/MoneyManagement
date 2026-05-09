@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinTrack</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <canvas id="gold-canvas"></canvas>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">F</span>
+        <span class="brand-name">FinTrack</span>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-tab="dashboard">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </span>
+          <span class="nav-label">Tổng quan</span>
+        </button>
+        <button class="nav-item" data-tab="expense">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </span>
+          <span class="nav-label">Chi tiêu</span>
+        </button>
+        <button class="nav-item" data-tab="todo">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+            </svg>
+          </span>
+          <span class="nav-label">Todo</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span id="clock"></span>
+        <button id="theme-toggle" class="theme-toggle" title="Chuyển theme">
+          <span id="theme-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16">
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <section id="tab-dashboard" class="tab active">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Tổng quan</h1>
+            <p class="page-sub" id="today-label"></p>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Thu nhập tháng này</span>
+              <span class="stat-dot dot-green"></span>
+            </div>
+            <div class="stat-value" id="total-income">0 ₫</div>
+            <div class="stat-bar"><div class="stat-bar-fill fill-green" id="bar-income"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Chi tiêu tháng này</span>
+              <span class="stat-dot dot-red"></span>
+            </div>
+            <div class="stat-value" id="total-expense">0 ₫</div>
+            <div class="stat-bar"><div class="stat-bar-fill fill-red" id="bar-expense"></div></div>
+          </div>
+          <div class="stat-card stat-card--gold">
+            <div class="stat-top">
+              <span class="stat-label">Số dư</span>
+              <span class="stat-dot dot-gold"></span>
+            </div>
+            <div class="stat-value gold" id="total-balance">0 ₫</div>
+            <div class="stat-bar"><div class="stat-bar-fill fill-gold" style="width:100%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Việc chưa xong</span>
+              <span class="stat-dot dot-blue"></span>
+            </div>
+            <div class="stat-value" id="todo-pending">0</div>
+            <div class="stat-bar"><div class="stat-bar-fill fill-blue" id="bar-todo"></div></div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title">Giao dịch gần đây</span>
+            </div>
+            <ul class="feed" id="recent-transactions"></ul>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title">Công việc gần đây</span>
+            </div>
+            <ul class="feed" id="recent-todos"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXPENSE -->
+      <section id="tab-expense" class="tab">
+        <div class="page-head">
+          <h1 class="page-title">Chi tiêu</h1>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Thêm giao dịch</span></div>
+          <form id="expense-form" class="form-grid">
+            <div class="field">
+              <label>Loại</label>
+              <select id="exp-type">
+                <option value="expense">Chi tiêu</option>
+                <option value="income">Thu nhập</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Danh mục</label>
+              <select id="exp-category">
+                <option value="Ăn uống">Ăn uống</option>
+                <option value="Di chuyển">Di chuyển</option>
+                <option value="Mua sắm">Mua sắm</option>
+                <option value="Giải trí">Giải trí</option>
+                <option value="Sức khỏe">Sức khỏe</option>
+                <option value="Giáo dục">Giáo dục</option>
+                <option value="Hóa đơn">Hóa đơn</option>
+                <option value="Lương">Lương</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+            <div class="field field--wide">
+              <label>Mô tả</label>
+              <input type="text" id="exp-desc" placeholder="Nhập mô tả..." autocomplete="off" />
+            </div>
+            <div class="field">
+              <label>Số tiền (₫)</label>
+              <input type="number" id="exp-amount" placeholder="0" min="0" />
+            </div>
+            <div class="field">
+              <label>Ngày</label>
+              <input type="date" id="exp-date" />
+            </div>
+            <div class="field field--action">
+              <button type="submit" class="btn btn-gold">Thêm</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="toolbar">
+          <select id="filter-type" class="toolbar-select">
+            <option value="all">Tất cả</option>
+            <option value="expense">Chi tiêu</option>
+            <option value="income">Thu nhập</option>
+          </select>
+          <select id="filter-month" class="toolbar-select"></select>
+          <input type="text" id="filter-search" class="toolbar-input" placeholder="Tìm kiếm..." />
+          <button class="btn btn-ghost btn-sm" id="clear-all-expense">Xóa tất cả</button>
+        </div>
+
+        <div id="transaction-list" class="tx-list"></div>
+      </section>
+
+      <!-- TODO -->
+      <section id="tab-todo" class="tab">
+        <div class="page-head">
+          <h1 class="page-title">Todo</h1>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Thêm công việc</span></div>
+          <form id="todo-form" class="form-grid">
+            <div class="field field--wide">
+              <label>Tên công việc</label>
+              <input type="text" id="todo-title" placeholder="Nhập công việc..." autocomplete="off" />
+            </div>
+            <div class="field">
+              <label>Ưu tiên</label>
+              <select id="todo-priority">
+                <option value="low">Thấp</option>
+                <option value="medium" selected>Trung bình</option>
+                <option value="high">Cao</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Hạn chót</label>
+              <input type="date" id="todo-due" />
+            </div>
+            <div class="field field--wide">
+              <label>Ghi chú</label>
+              <input type="text" id="todo-note" placeholder="Tuỳ chọn..." autocomplete="off" />
+            </div>
+            <div class="field field--action">
+              <button type="submit" class="btn btn-gold">Thêm</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="toolbar">
+          <button class="filter-pill active" data-filter="all">Tất cả</button>
+          <button class="filter-pill" data-filter="pending">Chưa xong</button>
+          <button class="filter-pill" data-filter="done">Hoàn thành</button>
+          <button class="filter-pill" data-filter="high">Ưu tiên cao</button>
+          <input type="text" id="todo-search" class="toolbar-input" placeholder="Tìm kiếm..." />
+          <button class="btn btn-ghost btn-sm" id="clear-done-todos">Xóa đã xong</button>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span id="todo-progress-label">0 / 0 hoàn thành</span>
+            <span id="todo-progress-pct" class="gold">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="todo-progress-fill"></div>
+          </div>
+        </div>
+
+        <ul id="todo-list" class="todo-list"></ul>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
