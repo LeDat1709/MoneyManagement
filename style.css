@@ -240,8 +240,12 @@ body {
 }
 
 .stat-card--gold {
+  border-color: var(--border2);
+  background: var(--surface);
+}
+
+[data-theme="dark"] .stat-card--gold {
   border-color: var(--gold-dim);
-  background: linear-gradient(135deg, #111111, #161208);
 }
 
 .stat-top {
